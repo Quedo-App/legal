@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Quedo — E-posta doğrulama</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+
+<h1>Quedo</h1>
+<p class="updated">E-posta doğrulama · Email confirmation</p>
+
+<!--
+  Supabase yönlendirmesi sonucu URL parçasında (#) taşır. Sayfa üç
+  durumu da doğru anlatmak zorunda: JavaScript çalışmazsa her iki
+  ihtimalde de doğru olan nötr metin görünür, çalışırsa kesin sonuç.
+  Başarısızken "Doğrulandı" demek, ölü bir sayfadan daha kötüdür.
+-->
+
+<div class="box key" id="neutral">
+  <p><strong>Uygulamaya dönüp giriş yapabilirsiniz.</strong></p>
+  <p>Giriş yapamıyorsanız bu bağlantının süresi dolmuş olabilir — aşağıya bakın.</p>
+  <hr style="border:0;border-top:1px solid var(--rule);margin:1rem 0">
+  <p><strong>You can return to the app and sign in.</strong></p>
+  <p>If you cannot sign in, this link may have expired — see below.</p>
+</div>
+
+<div class="box key" id="ok" hidden>
+  <p><strong>E-posta adresiniz doğrulandı.</strong></p>
+  <p>Quedo'ya dönüp bu adres ve şifrenizle giriş yapabilirsiniz. Bu sayfayı kapatabilirsiniz.</p>
+  <hr style="border:0;border-top:1px solid var(--rule);margin:1rem 0">
+  <p><strong>Your email address is confirmed.</strong></p>
+  <p>Go back to Quedo and sign in with this address and your password. You can close this page.</p>
+</div>
+
+<div class="box" id="fail" hidden>
+  <p><strong>Bu bağlantı geçersiz veya süresi dolmuş.</strong></p>
+  <p>Bağlantılar 24 saat geçerlidir ve yalnızca bir kez kullanılabilir. Bazı e-posta
+  sağlayıcıları bağlantıları güvenlik taraması için siz tıklamadan açar; bu da bağlantıyı
+  harcar.</p>
+  <p>Yapmanız gereken: uygulamaya dönün ve <strong>aynı adresle yeniden kaydolun</strong> —
+  yeni bir doğrulama e-postası gönderilir. Sorun sürerse
+  <a href="mailto:quedo@knightbaryon.com?subject=E-posta%20dogrulama">quedo@knightbaryon.com</a>
+  adresine yazın.</p>
+  <hr style="border:0;border-top:1px solid var(--rule);margin:1rem 0">
+  <p><strong>This link is invalid or has expired.</strong></p>
+  <p>Links are valid for 24 hours and can only be used once. Some mail providers open links
+  for security scanning before you click them, which uses the link up.</p>
+  <p>What to do: go back to the app and <strong>sign up again with the same address</strong> —
+  a fresh confirmation email will be sent. If it keeps failing, write to
+  <a href="mailto:quedo@knightbaryon.com?subject=Email%20confirmation">quedo@knightbaryon.com</a>.</p>
+</div>
+
+<h2>Gizlilik · Privacy</h2>
+<p>Bu sayfa hiçbir veri toplamaz, çerez kullanmaz ve hiçbir dış kaynağa istek atmaz.
+Adresteki doğrulama bilgisi yalnızca tarayıcınızda okunur, hiçbir yere gönderilmez.</p>
+<p>This page collects nothing, sets no cookies and makes no external requests. The
+confirmation information in the address is read in your browser only and is never sent
+anywhere.</p>
+
+<footer>
+  Quedo · Knight Baryon · <a href="index.html">Ana sayfa / Home</a> ·
+  <a href="gizlilik.html">Gizlilik</a> · <a href="privacy.html">Privacy</a>
+</footer>
+
+<script>
+(function () {
+  // Supabase sonucu fragment'ta taşır: basarida access_token/type,
+  // hatada error + error_code. Fragment sunucuya hic gitmez.
+  var params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  var show = function (id) {
+    document.getElementById('neutral').hidden = true;
+    document.getElementById(id).hidden = false;
+  };
+
+  // error_description ekrana basilmiyor: adresten gelen metni DOM'a
+  // koymak, saldirganin secmesine izin verdigi icin gereksiz bir risk.
+  if (params.get('error') || params.get('error_code')) {
+    show('fail');
+  } else if (params.get('access_token') || params.get('type')) {
+    show('ok');
+  }
+  // Hicbiri yoksa notr metin kalir -- ikisinde de dogru olan tek metin.
+})();
+</script>
+
+</main>
+</body>
+</html>
